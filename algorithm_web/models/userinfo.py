@@ -17,11 +17,35 @@ class UserInfo(models.Model):
     )
 
     message = models.CharField(
-        "상태 메시지",
-        db_column="Message",
+        '상태 메시지',
+        db_column='Message',
         max_length=60,
         blank=True,
         null=True,
+    )
+
+    level = models.PositiveSmallIntegerField(
+        '레벨',
+        db_column='Level',
+        blank=False,
+        null=False,
+        default=1,
+    )
+
+    next_exp = models.PositiveIntegerField(
+        '다음 경험치',
+        db_column='NextEXP',
+        blank=False,
+        null=False,
+        default=100,
+    )
+
+    possession_exp = models.PositiveIntegerField(
+        '보유 경험치',
+        db_column='PossessionEXP',
+        blank=False,
+        null=False,
+        default=0,
     )
 
     def __str__(self):
@@ -29,7 +53,7 @@ class UserInfo(models.Model):
 
     class Meta:
         db_table = 'USER_INFORMATION'
-        ordering = ['user__username', 'message']
+        ordering = ['user__username', 'message', 'level']
         verbose_name = '사용자: 추가정보'
         verbose_name_plural = '사용자: 추가정보'
 

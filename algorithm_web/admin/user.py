@@ -8,7 +8,7 @@ class StudentAdmin(admin.ModelAdmin):
     """
     학생관리
     """
-    list_display = ['user', 'message']
+    list_display = ['user', 'message', 'level', 'possession_exp']
 
     class Meta:
         model = models.UserInfo
