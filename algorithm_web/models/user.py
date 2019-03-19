@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
 
-class UserInfo(models.Model):
+class ExtraInformation(models.Model):
     """
     User Extra Information
     """
@@ -20,8 +20,9 @@ class UserInfo(models.Model):
         '상태 메시지',
         db_column='Message',
         max_length=60,
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
+        default='',
     )
 
     level = models.PositiveSmallIntegerField(
@@ -52,7 +53,7 @@ class UserInfo(models.Model):
         return '{}, {}'.format(self.user.username, self.message)
 
     class Meta:
-        db_table = 'USER_INFORMATION'
+        db_table = 'EXTRA_INFORMATION'
         ordering = ['user__username', 'message', 'level']
         verbose_name = '사용자: 추가정보'
         verbose_name_plural = '사용자: 추가정보'
@@ -61,4 +62,4 @@ class UserInfo(models.Model):
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserInfo.objects.create(user=instance)
+        ExtraInformation.objects.create(user=instance)

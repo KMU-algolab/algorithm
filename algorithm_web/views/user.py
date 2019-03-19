@@ -2,8 +2,8 @@ import datetime
 
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.contrib.auth.models import User
-from ..models.userinfo import UserInfo
+
+from ..models.user import ExtraInformation
 
 
 class MyPage(TemplateView):
@@ -11,5 +11,13 @@ class MyPage(TemplateView):
 
     def get(self, request, *arg, **kwargs):
         return render(request, self.template_name, {'user': self.request.user,
-                                                    'exp': int(self.request.user.userinfo.possession_exp /
-                                                               self.request.user.userinfo.next_exp * 100)})
+                                                    'exp': round(self.request.user.extrainformation.possession_exp /
+                                                                 self.request.user.extrainformation.next_exp * 100, 1)})
+
+    def post(self, request, *arg, **kwargs):
+        qs = ExtraInformation.objects.get(user_id=self.request.user.id)
+        qs.message = self.request.POST['message']
+        qs.save()
+        return render(request, self.template_name, {'user': self.request.user,
+                                                    'exp': round(self.request.user.extrainformation.possession_exp /
+                                                                 self.request.user.extrainformation.next_exp * 100, 1)})
