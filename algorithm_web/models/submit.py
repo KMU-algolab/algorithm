@@ -65,6 +65,13 @@ class Submit(models.Model):
         choices=STATUS_TYPE,
     )
 
+    code = models.TextField(
+        '코드',
+        db_column='Code',
+        blank=True,
+        null=True,
+    )
+
     def __str__(self):
         return '{}, {}, {}'.format(self.id, self.user.username, self.problem.problem_name)
 

@@ -25,17 +25,6 @@ class ContestProblemAdmin(admin.ModelAdmin):
         model = models.ContestProblem
 
 
-@admin.register(models.ContestResult)
-class ContestResultAdmin(admin.ModelAdmin):
-    """
-    대회 결과관리
-    """
-    list_display = ['participant', 'solved_problem_count', 'total_score']
-
-    class Meta:
-        model = models.ContestResult
-
-
 @admin.register(models.Participant)
 class ParticipantAdmin(admin.ModelAdmin):
     """
