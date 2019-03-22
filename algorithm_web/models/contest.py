@@ -50,19 +50,20 @@ class Contest(models.Model):
         null=False,
     )
 
+    host_email = models.EmailField(
+        '개최자 메일',
+        db_column='Host_Email',
+        max_length=50,
+        null=False,
+        blank=False,
+    )
+
     after_open = models.BooleanField(
         '문제공개여부',
         db_column='AfterOpen',
         blank=False,
         null=False,
         default=True,
-    )
-
-    order_type = models.CharField(
-        '채점기준',
-        db_column='OrderType',
-        max_length=3,
-        choices=ORDER_TYPE,
     )
 
     def __str__(self):

@@ -8,7 +8,7 @@ class ContestAdmin(admin.ModelAdmin):
     """
     대회관리
     """
-    list_display = ['contest_name', 'start_time', 'end_time', 'message', 'after_open', 'order_type']
+    list_display = ['contest_name', 'start_time', 'end_time', 'message', 'host_email', 'after_open']
 
     class Meta:
         model = models.Contest
