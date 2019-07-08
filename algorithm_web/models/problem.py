@@ -8,6 +8,11 @@ LEVEL_TYPE = (
     (2, '상'),
 )
 
+SCORING_TYPE = (
+    (True, 'SOLTUION'),
+    (False, 'CHECKER'),
+)
+
 def set_FK_Model_test():
     return User.objects.get(id=1)
 
@@ -31,6 +36,13 @@ class Problem(models.Model):
         null=False,
     )
 
+    problem_text = models.TextField(
+        '문제 내용',
+        db_column='ProblemText',
+        blank=False,
+        null=False,
+    )
+
     limit_time = models.PositiveSmallIntegerField(
         '제한 시간',
         db_column='LimitTime',
@@ -43,6 +55,22 @@ class Problem(models.Model):
         db_column='LimitMemory',
         blank=False,
         null=False,
+    )
+
+    scoring_type = models.BooleanField(
+        '채점방법',
+        db_column='ScoringType',
+        blank=False,
+        null=False,
+        default=True,
+        choices=SCORING_TYPE,
+    )
+
+    checker_code = models.TextField(
+        '채점코드',
+        db_column='CheckerCode',
+        blank=True,
+        null=True,
     )
 
     level = models.PositiveSmallIntegerField(
@@ -135,7 +163,6 @@ class ProblemSet(models.Model):
         blank=False,
         null=False,
         on_delete=models.SET(set_FK_Model_test),
-
     )
 
     set_name = models.CharField(

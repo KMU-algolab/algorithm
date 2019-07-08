@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from .problem import Problem
+from algorithm_web.models.problem import Problem
 from .language import Language
 
 STATUS_TYPE = (
