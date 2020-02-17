@@ -2,20 +2,7 @@
 
 {% block body %}
     <div class="row row-offcanvas row-offcanvas-right my-4">
-        <div class="col-2 sidebar-offcanvas" id="sidebar">
-            <div class="list-group">
-                <a href="#" class="list-group-item active">문제관리</a>
-                <a href="#" class="list-group-item">대회관리</a>
-                <a href="#" class="list-group-item">서버관리</a>
-            </div>
-        </div>
-
-        <div class="col-lg-10">
-            <div class="container">
-                <form action="{% url 'manage_problem' %}" method="post">{% csrf_token %}
-                    <input class="btn btn-success float-right mb-4" type="submit" value="추가">
-                </form>
-            </div>
+        <div class="col-lg-12">
             <div class="container mt-5">
                 <table class="table table-hover table-responsive-xl" style="text-align: center" data-link="row">
                     <thead>
@@ -25,19 +12,24 @@
                         <th scope="col">제한메모리(MB)</th>
                         <th scope="col">채점방법</th>
                         <th scope="col">난이도</th>
-                        <th scope="col">공개여부</th>
+                        <th scope="col">출처정보</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for problem in problems %}
                         <tr class="clickable-row" data-id="{{ problem.id }}">
                             <td colspan="3">
-                                {{ problem.problem_name|slice:':10' }}{{ problem.problem_name|truncatechars:10 }}</td>
+                                {% if problem.problem_name|length < 10 %}
+                                    {{ problem.problem_name }}
+                                {% else %}
+                                    {{ problem.problem_name|slice:':10' }}{{ problem.problem_name|truncatechars:10 }}
+                                    </td>
+                                {% endif %}
                             <td>{{ problem.limit_time }}</td>
                             <td>{{ problem.limit_memory }}</td>
                             <td>{{ problem.get_scoring_type_display }}</td>
-                            <td>{{ problem.get_level_display }}</td>
-                            <td>{% if problem.is_open %} O {% else %} X {% endif %}</td>
+                            <td>{{ problem.level }}</td>
+                            <td>{{ problem.info }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -49,7 +41,7 @@
     <script>
         jQuery(document).ready(function ($) {
             $(".clickable-row").click(function () {
-                {#window.location = $(this).data("href");#}
+                window.location = 'problem/submit/'+ $(this).data('id');
             });
         });
     </script>

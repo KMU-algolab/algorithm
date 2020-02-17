@@ -1,0 +1,273 @@
+{% extends "index.html" %}
+
+{% block body %}
+    <script>
+        var solution_case_cnt = 2;
+        var check_case_cnt = 2;
+    </script>
+    <style>
+        .checked {
+            color: orange;
+        }
+    </style>
+
+    <div class="row row-offcanvas row-offcanvas-right my-4">
+        <div class="col-2 sidebar-offcanvas" id="sidebar">
+            <div class="list-group">
+                <a href="#" class="list-group-item active">문제관리</a>
+                <a href="#" class="list-group-item">대회관리</a>
+                <a href="#" class="list-group-item">서버관리</a>
+            </div>
+        </div>
+
+        <div class="col-lg-10">
+            <form action="{% url 'create_problem' %}" method="post">
+                {% csrf_token %}
+                <ul class="nav nav-tabs" id="problem_process">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#asd">기본 정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#qwe">문제 작성</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="asd">
+                        <dl class="row">
+                            <dt class="col-lg-0 my-2 ml-4" style="font-size: 1.3rem">문제이름</dt>
+                            <dd class="col-sm-5 my-2 mr-5" style="font-size: 1.1rem">
+                                {{ problem.problem_name }}
+                            </dd>
+
+                            <dt class="col-lg-0 my-2 ml-4" style="font-size: 1.3rem">난이도</dt>
+                            <dd class="col-sm-3 my-2 mr-5" style="font-size: 1.1rem">
+                                <span class="fa fa-star checked" id="star1" onclick="add(this,1)"></span>
+                                <span class="fa fa-star" id="star2" onclick="add(this,2)"></span>
+                                <span class="fa fa-star" id="star3" onclick="add(this,3)"></span>
+                                <span class="fa fa-star" id="star4" onclick="add(this,4)"></span>
+                                <span class="fa fa-star" id="star5" onclick="add(this,5)"></span>
+                                {{ problem.level }}
+                            </dd>
+                        </dl>
+
+                            <dl class="row">
+                            <dt class="col-lg-0 my-2 ml-4" style="font-size: 1.3rem">제한시간(ms)</dt>
+                            <dd class="col-sm-2 my-2" style="font-size: 1.1rem">
+                                {{ problem.limit_time }}
+                            </dd>
+
+                            <dt class="col-lg-0 my-2" style="font-size: 1.3rem">제한메모리(MB)</dt>
+                            <dd class="col-sm-2 my-2" style="font-size: 1.1rem">
+                                {{ problem.limit_memory }}
+                            </dd>
+
+                            <dt class="col-lg-0 my-2" style="font-size: 1.3rem">출처정보</dt>
+                            <dd class="col-sm-2 my-2" style="font-size: 1.1rem">
+                                {{ problem.info }}
+                            </dd>
+                        </dl>
+
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#solution">Solution</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#check">Check</a>
+                            </li>
+                            {{ problem.scoring_type }}
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="solution">
+                                <dl class="row">
+                                    <dt class="col-lg-0 mt-3 ml-4" style="font-size: 1.3rem">테스트케이스</dt>
+                                    <input type="button" class="btn btn-primary float-right mt-3 ml-4 addBtnSolution"
+                                           value="추가">
+                                    <input type="button" class="btn btn-success float-right mt-3 mx-2" value="파일 추가">
+                                </dl>
+                                {{ testcase.management_form }}
+                                <div class="overflow-auto py-2 px-2 solutionCaseArea" id="form_set"
+                                     style="height: 24em; width: 48vw; background-color: #fbfbfc; border-radius: 6px 6px 6px 6px / 6px 6px 6px 6px">
+                                    {% for form in testcase.forms %}
+                                        <div style="margin-bottom: 0.4vw">
+                                            {{ form.as_table }}
+                                            <input id="clear1" type="button"
+                                                   class="btn btn-danger float-right mt-2 material-icons"
+                                                   value="clear"
+                                                   style="width: 40px; padding: 2px;" onclick="tmp(this, true)">
+                                        </div>
+                                    {% endfor %}
+                                    <div id="empty_form" style="display:none">
+                                        <div style="margin-bottom: 0.4vw">
+                                            {{ testcase.empty_form.as_table }}
+                                            <input id="clear1" type="button"
+                                                   class="btn btn-danger float-right mt-2 material-icons"
+                                                   value="clear"
+                                                   style="width: 40px; padding: 2px;" onclick="tmp(this, true)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="check">
+                                <dl class="row">
+                                    <dt class="col-lg-0 mt-3 ml-4" style="font-size: 1.3rem">테스트케이스</dt>
+                                    <input type="button" class="btn btn-primary float-right mt-3 ml-4 addBtnCheck"
+                                           value="추가">
+                                    <input type="button" class="btn btn-success float-right mt-3 mx-2" value="파일 추가">
+                                </dl>
+
+                                {{ input_only.management_form }}
+                                <div class="overflow-auto py-2 px-1 checkCaseArea" id="form_set_input"
+                                     style="height: 24em; width: 23.5vw; background-color: #fbfbfc; border-radius: 6px 6px 6px 6px / 6px 6px 6px 6px; float: left; margin-right: 10px">
+                                    <h5>입력</h5>
+                                        {% for form in input_only.forms %}
+                                            <div style="margin-bottom: 0.4vw">
+                                                {{ form.input }}
+                                                <input id="clear2" type="button"
+                                                       class="btn btn-danger float-right mt-2 material-icons"
+                                                       value="clear"
+                                                       style="width: 40px; padding: 2px;" onclick="tmp(this, false)">
+                                            </div>
+                                        {% endfor %}
+                                        <div id="empty_form_input" style="display:none">
+                                            <div style="margin-bottom: 0.4vw">
+                                                {{ input_only.empty_form.input }}
+                                                <input id="clear2" type="button"
+                                                       class="btn btn-danger float-right mt-2 material-icons"
+                                                       value="clear"
+                                                       style="width: 40px; padding: 2px;" onclick="tmp(this, false)">
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="overflow-auto py-2 px-1 checkCodeArea"
+                                     style="height: 24em; width: 23.5vw; background-color: #fbfbfc; border-radius: 6px 6px 6px 6px / 6px 6px 6px 6px">
+                                    <h5>확인코드</h5>
+                                    {{ problem.checker_code }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <input class="btn btn-info float-right mb-4 btnNext" style="margin-top: 1ex"
+                               value="다음">
+                    </div>
+
+                    <div class="tab-pane" id="qwe">
+                        {{ problem.problem_text }}
+                        <input name="image" type="file" id="upload" style="display: none" onchange="">
+                        <a href="https://www.tiny.cloud/docs/advanced/keyboard-shortcuts/#editorkeyboardshortcuts">TinyMCE
+                            Shortcuts?</a>
+
+                        <input type="submit" class="btn btn-info float-right mb-4"
+                               style="margin-top: 1ex; margin-left: 1ex"
+                               value="등록">
+                        <input class="btn btn-info float-right mb-4 btnPrevious" style="margin-top: 1ex"
+                               value="이전">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        jQuery(document).ready(function ($) {
+            $(".clickable-row").click(function () {
+                {#window.location = $(this).data("href");#}
+            });
+        });
+
+        $('.btnNext').click(function () {
+            $('#problem_process .active').parent().next('li').find('a').trigger('click');
+        });
+
+        $('.btnPrevious').click(function () {
+            $('#problem_process .active').parent().prev('li').find('a').trigger('click');
+        });
+
+        function tmp(ths, isSolution) {
+            ths.parentElement.remove();
+            if (isSolution) {
+                $('#id_testcase-TOTAL_FORMS').val(solution_case_cnt);
+            }
+            else {
+                $('#id_inputOnly-TOTAL_FORMS').val(check_case_cnt);
+            }
+        }
+
+        $('.addBtnSolution').click(function () {
+            if (solution_case_cnt < 30) {
+                $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, solution_case_cnt));
+                solution_case_cnt++;
+                $('#id_testcase-TOTAL_FORMS').val(solution_case_cnt);
+            }
+        });
+
+        $('.addBtnCheck').click(function () {
+            if (check_case_cnt < 30) {
+                $('#form_set_input').append($('#empty_form_input').html().replace(/__prefix__/g, check_case_cnt));
+                check_case_cnt++;
+                $('#id_inputOnly-TOTAL_FORMS').val(check_case_cnt);
+            }
+        });
+
+        $('#solution').click(function() {
+            $('#id_scoring_type').val('True');
+        });
+        $('#check').click(function() {
+            $('#id_scoring_type').val('False');
+        });
+    </script>
+
+    <script>
+        tinymce.init({
+            height : "640",
+            selector: '#id_problem_text',
+            paste_data_images: true,
+            plugins: [
+                "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+                "searchreplace wordcount visualblocks visualchars code fullscreen",
+                "insertdatetime media nonbreaking save table contextmenu directionality",
+                "emoticons template paste textcolor colorpicker textpattern"
+            ],
+            toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+            image_advtab: true,
+            setup: function (editor) {
+                editor.on('change', function () {
+                    tinymce.triggerSave();
+                });
+            },
+            file_picker_callback: function (callback, value, meta) {
+                if (meta.filetype == 'image') {
+                    $('#upload').trigger('click');
+                    $('#upload').on('change', function () {
+                        var file = this.files[0];
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            callback(e.target.result, {
+                                alt: ''
+                            });
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            }
+        });
+    </script>
+
+    <script>
+        function add(ths, sno) {
+            $('#id_level').val(sno);
+            for (var i = 1; i <= 5; i++) {
+                var cur = document.getElementById("star" + i);
+                cur.className = "fa fa-star"
+            }
+
+            for (var i = 1; i <= sno; i++) {
+                var cur = document.getElementById("star" + i);
+                if (cur.className == "fa fa-star") {
+                    cur.className = "fa fa-star checked"
+                }
+            }
+        }
+    </script>
+{% endblock %}

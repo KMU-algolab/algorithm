@@ -8,7 +8,7 @@ class ProblemeAdmin(admin.ModelAdmin):
     """
     문제관리
     """
-    list_display = ['problem_name', 'limit_time', 'limit_memory', 'scoring_type', 'level']
+    list_display = ['problem_name', 'limit_time', 'limit_memory', 'scoring_type', 'level', 'info', 'is_open', 'checker_code']
 
     class Meta:
         model = models.Problem

@@ -59,8 +59,8 @@ class Submit(models.Model):
     status = models.CharField(
         '채점상태',
         db_column='Status',
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         max_length=3,
         choices=STATUS_TYPE,
     )

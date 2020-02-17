@@ -2,10 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-LEVEL_TYPE = (
-    (0, '하'),
-    (1, '중'),
-    (2, '상'),
+INFO = (
+    (0, '기타'),
+    (1, '채용시험'),
+    (2, '교외대회'),
+    (3, '교내대회'),
 )
 
 SCORING_TYPE = (
@@ -34,6 +35,7 @@ class Problem(models.Model):
         max_length=60,
         blank=False,
         null=False,
+        unique=True,
     )
 
     problem_text = models.TextField(
@@ -60,8 +62,8 @@ class Problem(models.Model):
     scoring_type = models.BooleanField(
         '채점방법',
         db_column='ScoringType',
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         default=True,
         choices=SCORING_TYPE,
     )
@@ -78,14 +80,22 @@ class Problem(models.Model):
         db_column='Level',
         blank=False,
         null=False,
-        choices=LEVEL_TYPE,
+    )
+
+    info = models.PositiveSmallIntegerField(
+        '정보',
+        db_column='info',
+        blank=True,
+        null=True,
+        default=0,
+        choices=INFO,
     )
 
     is_open = models.BooleanField(
         '공개여부',
         db_column='isOpen',
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         default=True,
     )
 
@@ -120,18 +130,18 @@ class TestCase(models.Model):
         on_delete=models.CASCADE,
     )
 
-    input_data = models.TextField(
-        '입력 데이터',
-        db_column='InputData',
+    input = models.TextField(
+        '입력',
+        db_column='Input',
         blank=False,
         null=False,
     )
 
-    output_data = models.TextField(
-        '출력 데이터',
-        db_column='OutputData',
-        blank=False,
-        null=False,
+    output = models.TextField(
+        '출력',
+        db_column='Output',
+        blank=True,
+        null=True,
     )
 
     def __str__(self):

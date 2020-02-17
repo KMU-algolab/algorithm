@@ -37,7 +37,7 @@ class Language(models.Model):
     )
 
     def __str__(self):
-        return '{}, {}'.format(self.id, self.language)
+        return '{}'.format(self.language)
 
     class Meta:
         db_table = 'LANGUAGE'

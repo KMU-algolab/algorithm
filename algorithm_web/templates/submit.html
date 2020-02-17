@@ -1,0 +1,89 @@
+{% extends "index.html" %}
+
+{% block body %}
+    <style type="text/css" media="screen">
+        #editor {
+            position: relative;
+            height: 30vw;
+        }
+    </style>
+
+    <div class="row row-offcanvas row-offcanvas-right my-4">
+        <div class="col-xl-12">
+            <dl class="row">
+                <dt class="col-lg-0 my-1" style="font-size: 1.5rem">{{ problem.problem_name }}</dt>
+            </dl>
+            <dl class="row">
+                <table class="table table-hover table-responsive-sm" style="text-align: center">
+                    <thead>
+                    <tr>
+                        <th scope="col">제한시간(ms)</th>
+                        <th scope="col">제한메모리(MB)</th>
+                        <th scope="col">난이도</th>
+                        <th scope="col">출처정보</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="d-md-table-row">
+                        <td>{{ problem.limit_time }}</td>
+                        <td>{{ problem.limit_memory }}</td>
+                        <td>{{ problem.level }}</td>
+                        <td>{{ problem.info }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </dl>
+            <ul class="nav nav-tabs" id="problem_process">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#problem">문제</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#submit">제출</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="problem">
+                    <textarea id="id_problem_text">{{ problem.problem_text }}</textarea>
+                </div>
+
+                <div class="tab-pane" id="submit">
+                    <dl class="row">
+                        <dt class="col-lg-0 my-3 ml-4" style="font-size: 1.2rem">언어</dt>
+                        <dd class="col-sm-2 my-3">
+                            {{ form.language }}
+                        </dd>
+                    </dl>
+                    <form role="form">
+                        <div id="editor"></div>
+                        {{ form.code }}
+                        <button type="button" class="btn btn-success" onclick=""
+                                style="margin-top: 5px">제출하기
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        tinymce.init({
+            height: '640',
+            selector: '#id_problem_text',
+            readonly: 1
+        });
+    </script>
+
+    <script src="/static/aceEditor/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var editor = ace.edit("editor");
+        var textarea = $('textarea[name="editor"]');
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/javascript");
+        editor.getSession().setValue(textarea.val());
+        editor.getSession().on('change', function () {
+            textarea.val(editor.getSession().getValue());
+        });
+    </script>
+{% endblock %}
