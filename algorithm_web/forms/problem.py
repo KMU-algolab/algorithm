@@ -25,9 +25,9 @@ class TestCaseForm(forms.ModelForm):
         fields = ('input', 'output')
 
         widgets = {
-            'input': forms.TextInput(attrs={'class': 'form-control',
+            'input': forms.Textarea(attrs={'class': 'form-control',
                                             'style': 'width: 19vw; height: 5vw; display: inline-block; margin-left: 0.5vw; margin-right: 0.5vw'}),
-            'output': forms.TextInput(attrs={'class': 'form-control',
+            'output': forms.Textarea(attrs={'class': 'form-control',
                                              'style': 'width: 19vw; height: 5vw; display: inline-block; margin-left: 0.5vw; margin-right: 0.5vw'})
         }
 
@@ -37,9 +37,9 @@ class InputOnlyForm(forms.ModelForm):
         fields = ('input',)
 
         widgets = {
-            'input': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 19vw; height: 5vw; display: inline-block; margin-left: 0.5vw'}),
+            'input': forms.Textarea(attrs={'class': 'form-control', 'style': 'width: 19vw; height: 5vw; display: inline-block; margin-left: 0.5vw'}),
         }
 
 
-TestCaseFormset = forms.formset_factory(TestCaseForm, extra=1)
-InputOnlyFormset = forms.formset_factory(InputOnlyForm, extra=1)
+TestCaseFormset = forms.formset_factory(TestCaseForm, extra=0)
+InputOnlyFormset = forms.formset_factory(InputOnlyForm, extra=0)

@@ -1,0 +1,30 @@
+<table class="table table-hover table-responsive-xl" id="manager-table" style="text-align: center" data-link="row">
+    <thead>
+    <tr>
+        <th scope="col" colspan="3">이름</th>
+        <th scope="col">이메일</th>
+        <th scope="col">가입일</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for manager in managers %}
+        <tr>
+            <td colspan="3">
+                {% if manager.username|length < 10 %}
+                    {{ manager.username }}
+                {% else %}
+                    {{ manager.username|slice:':10' }}{{ manager.username|truncatechars:10 }}
+                    </td>
+                {% endif %}
+            <td>{{ manager.email }}</td>
+            <td>{{ manager.date_joined }}</td>
+            <td style="padding: 10px">
+                <button class="btn btn-danger" style="height: 3.2vh; padding-top: 0px; padding-bottom: 0px"
+                        onclick="delManager(this)">삭제
+                </button>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

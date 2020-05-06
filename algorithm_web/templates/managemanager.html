@@ -1,0 +1,130 @@
+{% extends "index.html" %}
+{% block body %}
+
+    <div class="row row-offcanvas row-offcanvas-right my-4">
+        <div class="col-2 sidebar-offcanvas" id="sidebar">
+            <div class="list-group">
+                <a href="{% url 'manage_problem' %}" class="list-group-item">문제관리</a>
+                <a href="#" class="list-group-item">대회관리</a>
+                <a href="#" class="list-group-item active">운영자관리</a>
+            </div>
+        </div>
+
+        <div class="col-lg-10">
+            <div class="container">
+                <input type="button" class="btn btn-success float-right mb-4" value="추가" onclick="addManager()">
+                <input type="search" id="txtSearch" name="search" class="form-control col-3 float-right mr-2" onkeyup="searchOpen()">
+
+                <div class="spinner-border float-right mr-2 mt-1" role="status" id="spinner" style="visibility: hidden">
+                    <span class="sr-only">Loading...</span>
+                </div>
+
+            </div>
+            <div class="container mt-5">
+                <table class="table table-hover table-responsive-xl" id="manager-table" style="text-align: center" data-link="row">
+                    <thead>
+                    <tr>
+                        <th scope="col" colspan="3">이름</th>
+                        <th scope="col">이메일</th>
+                        <th scope="col">가입일</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for manager in managers %}
+                    <tr>
+                        <td colspan="3">
+                            {% if manager.username|length < 10 %}
+                                {{ manager.username }}
+                            {% else %}
+                                {{ manager.username|slice:':10' }}{{ manager.username|truncatechars:10 }}
+                                </td>
+                            {% endif %}
+                        <td>{{ manager.email }}</td>
+                        <td>{{ manager.date_joined }}</td>
+                        <td style="padding: 10px"><button class="btn btn-danger" style="height: 3.2vh; padding-top: 0px; padding-bottom: 0px" onclick="delManager(this)">삭제</button></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script>
+        function searchOpen() {
+            var search = $('#txtSearch').val();
+            var data = {
+                search: search
+            };
+            $.ajax({
+                url: '/search/user',
+                type: 'GET',
+                data: data,
+                dataType: 'jsonp',
+                jsonp: 'callback',
+                jsonpCallback: 'searchResult'
+            });
+        }
+
+        function searchResult(data) {
+            $("#txtSearch").autocomplete({
+                source: data
+            });
+        }
+
+        function addManager() {
+            document.getElementById('spinner').style.visibility = 'visible';
+            var username = $('#txtSearch').val();
+            var data = {
+                username: username,
+                req: 'add'
+            };
+
+            $.ajax({
+                url: '/manage/manager',
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    document.getElementById('spinner').style.visibility = 'hidden';
+                    document.getElementById('txtSearch').value = "";
+                    $('#manager-table').html(data.rendered_table);
+                },
+                error: function (data) {
+                    document.getElementById('spinner').style.visibility = 'hidden';
+                    document.getElementById('txtSearch').value = "";
+                    alert(data.responseJSON.error);
+                }
+            });
+        }
+
+        function delManager(obj) {
+            var br = obj.parentNode.parentNode.childNodes;
+            var data = {
+                username: br[1].innerHTML,
+                req: 'del'
+            };
+
+            $.ajax({
+                url: '/manage/manager',
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    document.getElementById('spinner').style.visibility = 'hidden';
+                    $('#manager-table').html(data.rendered_table);
+                },
+                error: function (data) {
+                    console.log(data);
+                    alert(data.responseJSON.error);
+                    document.getElementById('spinner').style.visibility = 'hidden';
+                }
+            });
+        }
+    </script>
+{% endblock %}

@@ -1,21 +1,26 @@
 from django.urls import path, include
 from .views.index import HomeView
 from .views.user import MyPage
-from .views.problem import Problems, Submit
-from .views.manager.problem import ManageProblems, CreateProblems
+from .views.problem import ProblemsView, SubmitView, ProblemSetView, ProblemsInSetView
+from .views.manager.problem import ManageProblemsView, CreateProblemsView
+from .views.manager.manager import ManageManagerView
+from .views.search import user_search
 
 
 urlpatterns = (
     path('', HomeView.as_view(), name='home'),
     path('mypage/', MyPage.as_view(), name='mypage'),
     ####################################################
-    path('manage/problem', ManageProblems.as_view(), name='manage_problem'),
-    path('manage/problem/new', CreateProblems.as_view(), name='create_problem'),
-    # path('manage/manager', ManageManager.as_view(), name='manage_manager'),
-    # path('manage/manager/new', CreateManager.as_view(), name='create_manager'),
+    path('manage/problem', ManageProblemsView.as_view(), name='manage_problem'),
+    path('manage/problem/new', CreateProblemsView.as_view(), name='create_problem'),
+    path('manage/manager', ManageManagerView.as_view(), name='manage_manager'),
     ####################################################
-    path('problem', Problems.as_view(), name='problem_list'),
-    path('problem/submit/<int:id>', Submit.as_view(), name='submit_problem'),
+    path('problem', ProblemsView.as_view(), name='problems'),
+    path('problem/<int:id>', SubmitView.as_view(), name='submit_problem'),
+    path('problemset', ProblemSetView.as_view(), name='problemset_list'),
+    path('problemset/<int:id>', ProblemsInSetView.as_view(), name='problemset_problems'),
+    ####################################################
+    path('search/user', user_search, name='search_user'),
     ####################################################
     path('accounts/', include('allauth.urls'))
 )

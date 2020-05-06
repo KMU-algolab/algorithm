@@ -1,0 +1,74 @@
+{% extends "index.html" %}
+
+{% block body %}
+    <div class="row row-offcanvas row-offcanvas-right my-4">
+        <div class="col-lg-12">
+            <div class="container mt-5">
+                <button class="btn btn-success" style="float: right; margin-bottom: 0.8vh; margin-right: 0.8vw" data-toggle="modal" data-target="#createProblemset">문제집 추가</button>
+                <table class="table table-hover table-responsive-xl" style="text-align: center" data-link="row">
+                    <thead>
+                    <tr class="d-flex">
+                        <th scope="col" class="col-4">문제집 이름</th>
+                        <th scope="col" class="col-2">만든사람</th>
+                        <th scope="col" class="col-lg-6">진행률</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for problemset in problemsets %}
+                        <tr class="clickable-row d-flex" data-id="{{ problemset.id }}">
+                            <td class="col-4">
+                                {% if problemset.set_name|length < 20 %}
+                                    {{ problemset.set_name }}
+                                {% else %}
+                                    {{ problemset.set_name|slice:':20' }}{{ problemset.set_name|truncatechars:20 }}
+                                    </td>
+                                {% endif %}
+                            <td class="col-2">{{ problemset.editor__username }}</td>
+                            <td class="col-lg-6">
+                                <div class="progress my-0 ml-2" style="height: 1.5rem; width: auto">
+                                    <div class="progress-bar" role="progressbar"  style="width: {{ problemset.rate }}%;"
+                                         aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{ problemset.rate }}%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="createProblemset" tabindex="-1" role="dialog" aria-labelledby="createProblemsetLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" action="{% url 'problemset_list' %}" name="createProblemsetForm"> {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createProblemsetLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        문제집 이름<input type="text" class="form-control" name="set_name"><br>
+                        문제집 설명<input type="text" class="form-control" name="message">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        jQuery(document).ready(function ($) {
+            $(".clickable-row").click(function () {
+                window.location = 'problemset/'+ $(this).data('id');
+            });
+        });
+    </script>
+{% endblock %}

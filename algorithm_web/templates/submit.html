@@ -80,10 +80,22 @@
         var editor = ace.edit("editor");
         var textarea = $('textarea[name="editor"]');
         editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/javascript");
+        editor.session.setMode("ace/mode/c_cpp");
         editor.getSession().setValue(textarea.val());
         editor.getSession().on('change', function () {
             textarea.val(editor.getSession().getValue());
         });
+    </script>
+    <script>
+        document.getElementsByTagName('select')[0].onchange = function () {
+            var index = this.selectedIndex;
+            var inputText = this.children[index].innerHTML.trim();
+            if (inputText === 'C++')
+                editor.session.setMode("ace/mode/c_cpp");
+            else if (inputText === 'python3.6')
+                editor.session.setMode("ace/mode/python");
+            else if (inputText === 'java')
+                editor.session.setMode("ace/mode/java");
+        }
     </script>
 {% endblock %}

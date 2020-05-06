@@ -181,6 +181,7 @@ class ProblemSet(models.Model):
         max_length=50,
         blank=False,
         null=False,
+        unique=True,
     )
 
     message = models.CharField(

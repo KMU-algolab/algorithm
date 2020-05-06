@@ -5,14 +5,14 @@ from algorithm_web.models.problem import Problem
 from algorithm_web.forms.problem import ProblemForm, TestCaseFormset, InputOnlyFormset
 
 
-class ManageProblems(TemplateView):
+class ManageProblemsView(TemplateView):
     template_name = 'manageproblem.html'
 
     def get(self, request, *arg, **kwargs):
         return render(request, self.template_name, {'problems': Problem.objects.filter().all()})
 
 
-class CreateProblems(TemplateView):
+class CreateProblemsView(TemplateView):
     def get(self, request, *arg, **kwargs):
         problem = ProblemForm(initial={'level': 1, 'limit_time': 1000, 'limit_memory': 128, 'scoring_type': True})
         testcase = TestCaseFormset(prefix='testcase')
@@ -46,4 +46,4 @@ class CreateProblems(TemplateView):
                             post_input.save()
 
 
-        return render(request, 'problemlist.html', {'problems': Problem.objects.filter().all()})
+        return render(request, 'manageproblem.html', {'problems': Problem.objects.filter().all()})

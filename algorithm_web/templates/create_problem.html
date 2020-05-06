@@ -2,8 +2,8 @@
 
 {% block body %}
     <script>
-        var solution_case_cnt = 2;
-        var check_case_cnt = 2;
+        var solution_case_cnt = 1;
+        var check_case_cnt = 1;
     </script>
     <style>
         .checked {
@@ -16,7 +16,7 @@
             <div class="list-group">
                 <a href="#" class="list-group-item active">문제관리</a>
                 <a href="#" class="list-group-item">대회관리</a>
-                <a href="#" class="list-group-item">서버관리</a>
+                <a href="#" class="list-group-item">운영자관리</a>
             </div>
         </div>
 
@@ -83,7 +83,7 @@
                                     <dt class="col-lg-0 mt-3 ml-4" style="font-size: 1.3rem">테스트케이스</dt>
                                     <input type="button" class="btn btn-primary float-right mt-3 ml-4 addBtnSolution"
                                            value="추가">
-                                    <input type="button" class="btn btn-success float-right mt-3 mx-2" value="파일 추가">
+                                    <input type="file" name="input_file" class="btn btn-success float-right mt-3 mx-2" value="파일 추가" onchange="readFiles(this, true)">
                                 </dl>
                                 {{ testcase.management_form }}
                                 <div class="overflow-auto py-2 px-2 solutionCaseArea" id="form_set"
@@ -114,7 +114,7 @@
                                     <dt class="col-lg-0 mt-3 ml-4" style="font-size: 1.3rem">테스트케이스</dt>
                                     <input type="button" class="btn btn-primary float-right mt-3 ml-4 addBtnCheck"
                                            value="추가">
-                                    <input type="button" class="btn btn-success float-right mt-3 mx-2" value="파일 추가">
+                                    <input type="file" name="input_file" class="btn btn-success float-right mt-3 mx-2" value="파일 추가" onchange="readFiles(this, false)">
                                 </dl>
 
                                 {{ input_only.management_form }}
@@ -169,6 +169,30 @@
         </div>
     </div>
 
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModallLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Select file : <input type="file" name="input_file" multiple="" onchange="readFiles(this, true)"><br>
+
+                    <!-- Preview-->
+                    <div id='preview'></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         jQuery(document).ready(function ($) {
             $(".clickable-row").click(function () {
@@ -194,19 +218,32 @@
             }
         }
 
+        function add_input_solution(data) {
+            $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, solution_case_cnt));
+            if (data) {
+                document.getElementById("id_testcase-" + solution_case_cnt + "-input").value = data[0];
+                document.getElementById("id_testcase-" + solution_case_cnt + "-output").value = data[1];
+            }
+            solution_case_cnt++;
+            $('#id_testcase-TOTAL_FORMS').val(solution_case_cnt);
+        }
         $('.addBtnSolution').click(function () {
             if (solution_case_cnt < 30) {
-                $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, solution_case_cnt));
-                solution_case_cnt++;
-                $('#id_testcase-TOTAL_FORMS').val(solution_case_cnt);
+                add_input_solution('');
             }
         });
 
+        function add_input_check (data) {
+            $('#form_set_input').append($('#empty_form_input').html().replace(/__prefix__/g, check_case_cnt));
+            if (data) {
+                document.getElementById("id_testcase-" + solution_case_cnt + "-input").value = data;
+            }
+            check_case_cnt++;
+            $('#id_inputOnly-TOTAL_FORMS').val(check_case_cnt);
+        }
         $('.addBtnCheck').click(function () {
             if (check_case_cnt < 30) {
-                $('#form_set_input').append($('#empty_form_input').html().replace(/__prefix__/g, check_case_cnt));
-                check_case_cnt++;
-                $('#id_inputOnly-TOTAL_FORMS').val(check_case_cnt);
+                add_input_check('');
             }
         });
 
@@ -227,9 +264,59 @@
                 "advlist autolink lists link image charmap print preview hr anchor pagebreak",
                 "searchreplace wordcount visualblocks visualchars code fullscreen",
                 "insertdatetime media nonbreaking save table contextmenu directionality",
-                "emoticons template paste textcolor colorpicker textpattern"
+                "emoticons template paste textcolor colorpicker textpattern",
             ],
             toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+            style_formats: [
+                {
+                    title: 'Headings', items: [
+                        {title: 'Heading 1', format: 'h1'},
+                        {title: 'Heading 2', format: 'h2'},
+                        {title: 'Heading 3', format: 'h3'},
+                        {title: 'Heading 4', format: 'h4'},
+                        {title: 'Heading 5', format: 'h5'},
+                        {title: 'Heading 6', format: 'h6'}
+                    ]
+                },
+                {
+                    title: 'Inline', items: [
+                        {title: 'Bold', format: 'bold'},
+                        {title: 'Italic', format: 'italic'},
+                        {title: 'Underline', format: 'underline'},
+                        {title: 'Strikethrough', format: 'strikethrough'},
+                        {title: 'Superscript', format: 'superscript'},
+                        {title: 'Subscript', format: 'subscript'},
+                        {title: 'Code', format: 'code'}
+                    ]
+                },
+                {
+                    title: 'Blocks', items: [
+                        {title: 'Paragraph', format: 'p'},
+                        {title: 'Blockquote', format: 'blockquote'},
+                        {title: 'Div', format: 'div'},
+                        {title: 'Pre', format: 'pre'}
+                    ]
+                },
+                {
+                    title: 'Align', items: [
+                        {title: 'Left', format: 'alignleft'},
+                        {title: 'Center', format: 'aligncenter'},
+                        {title: 'Right', format: 'alignright'},
+                        {title: 'Justify', format: 'alignjustify'}
+                    ]
+                },
+                {
+                    title: 'line spacing',
+                    items: [
+                        {title: 'Line height 10px', selector: 'p,div,h1,h2,h3,h4,h5,h6', styles: {lineHeight: '10px'}},
+                        {title: 'Line height 15px', selector: 'p,div,h1,h2,h3,h4,h5,h6', styles: {lineHeight: '15px'}},
+                        {title: 'Line height 20px', selector: 'p,div,h1,h2,h3,h4,h5,h6', styles: {lineHeight: '20px'}},
+                        {title: 'Line height 25px', selector: 'p,div,h1,h2,h3,h4,h5,h6', styles: {lineHeight: '25px'}},
+                        {title: 'Line height 30px', selector: 'p,div,h1,h2,h3,h4,h5,h6', styles: {lineHeight: '30px'}}
+                    ]
+                }
+            ],
+
             image_advtab: true,
             setup: function (editor) {
                 editor.on('change', function () {
@@ -269,5 +356,70 @@
                 }
             }
         }
+    </script>
+
+    <script>
+    function readFiles(obj, isSolution) {
+        // File Type  Vaildation
+        files = document.getElementsByName("input_file")[0].files;
+
+        // .csv text/plain type validation
+        for (var i = 0; i < files.length; i++) {
+            try {
+                var type = files.item(i).name.split(".")[1];
+                if (type == "txt") {
+                    var reader = new FileReader();
+
+                    try {
+                        reader.readAsText(files[i], "EUC-KR");
+                    } catch (err) {
+                        reader.readAsText(files[i], "UTF-8");
+                    }
+
+                    if (isSolution) {
+                        reader.onload = function (event) {
+                            var data = event.target.result;
+                            data = data.replace('\r', '').replace('$input$cases\n', '').trim();
+
+                            var data_list = data.split(/\s*\$output\$cases\s/);
+                            var input_data = data_list[0].split(/\s*\n\s/);
+                            var output_data = data_list[1].split(/\s*\n\s/);
+
+                            if (input_data.length === output_data.length) {
+                                for (var j = 0; j < input_data.length; j++) {
+                                    add_input_solution([input_data[j].trim(), output_data[j].trim()]);
+                                }
+                            }
+                            else {
+                                alert("data error");
+                            }
+                        };
+                    }
+                    else {
+                        reader.onload = function (event) {
+                            var data = event.target.result;
+                            data = data.replace('\r', '').replace('$input$cases\n', '').trim();
+
+                            var input_data = data[0].split(/\s*\n\s/);
+
+                            for (var j = 0; j < input_data.length; j++) {
+                                add_input_solution(input_data[j].trim());
+                            }
+                        };
+                    }
+
+                    reader.onerror = function (event) {
+                        var errCode = event.target.error.code;
+
+                        if (errCode == 1) alert("Not Found File");
+                        else if (errCode == 2) alert("File Changes");
+                        else if (errCode == 3) alert("Read Validation");
+                        else if (errCode == 4) alert("Authority Problem");
+                        else if (errCode == 5) alert("URL Error");
+                    };
+                }
+            }   catch (err) {}
+        }
+    }
     </script>
 {% endblock %}

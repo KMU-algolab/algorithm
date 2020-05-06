@@ -4,6 +4,7 @@
     <div class="row row-offcanvas row-offcanvas-right my-4">
         <div class="col-lg-12">
             <div class="container mt-5">
+                <button class="btn btn-success" style="float: right; margin-bottom: 0.8vh; margin-right: 0.8vw" data-toggle="modal" data-target="#createProblemset">문제 추가</button>
                 <table class="table table-hover table-responsive-xl" style="text-align: center" data-link="row">
                     <thead>
                     <tr>
@@ -38,10 +39,36 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="createProblemset" tabindex="-1" role="dialog" aria-labelledby="createProblemsetLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" action="{% url 'problemset_list' %}" name="createProblemsetForm"> {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createProblemsetLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        문제집 이름<input type="text" class="form-control" name="set_name"><br>
+                        문제집 설명<input type="text" class="form-control" name="message">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         jQuery(document).ready(function ($) {
             $(".clickable-row").click(function () {
-                window.location = 'problem/'+ $(this).data('id');
+                var url = "{% url 'problems' %}";
+                window.location.href = url + '/' + $(this).data('id');
             });
         });
     </script>
